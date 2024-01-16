@@ -8,7 +8,19 @@ Rails.application.configure do
   # since you don't have to restart the web server when you make code changes.
   config.enable_reloading = true
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
-
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+  address:              'in-v3.mailjet.com',
+  port:                 587,
+  user_name:             ENV['EMAIL_HOST_USER'],
+  password:             ENV['EMAIL_HOST_PASSWORD'],
+  authentication:       :plain,
+  enable_starttls_auto: true
+  }
+  
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.default charset: 'utf-8'
+  
   # Do not eager load code on boot.
   config.eager_load = false
 
@@ -38,7 +50,7 @@ Rails.application.configure do
   config.active_storage.service = :local
 
   # Don't care if the mailer can't send.
-  config.action_mailer.raise_delivery_errors = false
+  
 
   config.action_mailer.perform_caching = false
 
