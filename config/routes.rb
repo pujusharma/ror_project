@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  get 'speech/text_to_speech'
+  get 'speech/speech_to_text'
+  
   resources :products  
   root 'products#index'  
   get 'home/index'
