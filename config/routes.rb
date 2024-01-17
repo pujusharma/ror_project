@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   get '/contact', to: "home#contact"
   post '/contact_email', to: "home#contact_email" , as: "contact_email"
   get '/about', to: "home#about"
+  get '/profile', to: "home#profile"
   devise_for :users
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

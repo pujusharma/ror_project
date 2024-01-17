@@ -70,3 +70,4 @@ end
 
 gem "devise"
 gem "byebug"
+gem 'dotenv-rails', groups: [:development, :test]

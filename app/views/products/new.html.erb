@@ -12,12 +12,13 @@
 
     <div class="mb-3">
       <%= f.label :name, class: 'form-label' %>
-      <%= f.text_field :name, class: 'form-control' %>
+      <%= f.text_field :name, class: 'form-control', required: "true" %>
     </div>
 
     <div class="mb-3">
       <%= f.label :price, class: 'form-label' %>
-      <%= f.text_field :price, class: 'form-control' %>
+      <%= f.text_field :price, class: 'form-control', value: number_with_precision(@product.price.to_d, precision: 2), id: 'price',  pattern: '\d+' %>
+      <div id="price-error" class="text-danger"></div>
     </div>
 
     <div class="mb-3">
@@ -26,7 +27,7 @@
     </div>
 
     <div class="mb-3">
-    <%= f.label :image, class: 'form-label' %>
+      <%= f.label :image, class: 'form-label' %>
       <%= f.file_field :image, class: 'form-control' %>
     </div>
 
@@ -36,3 +37,18 @@
     </div>
   <% end %>
 </div>
+
+<script>
+  $(document).ready(function() {
+    $('#price').on('input', function() {
+      var inputVal = $(this).val();
+
+      if (!/^\d*$/.test(inputVal)) {
+        $('#price-error').text('Please enter a valid numeric value for the price.');
+      } else {
+        $('#price-error').text('');
+      }
+    });
+  });
+</script>
+

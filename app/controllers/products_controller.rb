@@ -1,6 +1,5 @@
 class ProductsController < ApplicationController
-  before_action :authenticate_user!  
-       
+  before_action :authenticate_user! 
   # GET method to get all products from database   
   def index   
     @products = Product.all   
