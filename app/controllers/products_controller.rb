@@ -18,6 +18,7 @@ class ProductsController < ApplicationController
   # POST method for processing form data   
   def create   
     @product = Product.new(product_params)   
+    @product.image.attach(params[:product][:image]) if params[:product][:image].present?
     if @product.save   
       flash[:notice] = 'Product added!'   
       redirect_to root_path   

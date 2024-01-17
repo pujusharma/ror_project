@@ -1,5 +1,5 @@
 <div class="container">
-  <%= form_for @product, url: { action: :create }, html: { class: 'form' } do |f| %>
+  <%= form_for @product, multipart: true, url: { action: :create }, html: { class: 'form' } do |f| %>
     <div class="mb-3">
       <h3>Add a Product</h3>
     </div>
@@ -30,6 +30,7 @@
       <%= f.label :image, class: 'form-label' %>
       <%= f.file_field :image, class: 'form-control' %>
     </div>
+    
 
     <div class="mb-3">
       <%= link_to 'Back', { controller: 'products', action: 'index' }, class: 'btn btn-secondary' %>
