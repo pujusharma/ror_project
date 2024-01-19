@@ -1,57 +1,79 @@
 class SpeechController < ApplicationController
-  skip_before_action :verify_authenticity_token, only: [:text_to_speech]
   require 'rest-client'
   require 'json'
 
-  def text_to_speech
-    subscription_key = ENV["AZURE_SUBSCRIPTION_KEY"]
-    endpoint = ENV["AZURE_ENDPOINT"]
-    region = ENV["AZURE_REGION"]
-    endpoint_url = "https://#{ENV["AZURE_REGION"]}.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1"
-   
- 
-    response = RestClient.post(
-      endpoint_url,
-      Content-Type: 'application/json',
-      Accept: 'audio/wav',
-      'Ocp-Apim-Subscription-Key': subscription_key,
-      language: 'en-US',
-      format: 'detailed'
-    )
+  skip_before_action :verify_authenticity_token, only: [:text_to_speech, :speech_to_text]
 
+  def text_to_speech_form
 
-    # Do something with the audio data (e.g., save to a file, stream to the client)
-    audio_data = response.body
-   
-    # Your implementation here
   end
 
-  def speech_to_text
+  def text_to_speech
     subscription_key = ENV["AZURE_SUBSCRIPTION_KEY"]
-    endpoint = ENV["AZURE_ENDPOINT"]
-    audio_file_path = 'path/to/audio/file.wav'
+    region = ENV["REGION"] 
+    endpoint = "https://#{region}.tts.speech.microsoft.com/"
 
-    speech_api_url = "#{endpoint}/cognitiveservices/v1"
+    text = params[:text].to_s
+    speech_api_url = "#{endpoint}cognitiveservices/v1"
 
-    audio_data = File.binread(audio_file_path)
+    headers = {
+      'Content-Type' => 'application/ssml+xml',
+      'X-Microsoft-OutputFormat' => 'audio-16khz-32kbitrate-mono-mp3',
+      'Authorization' => "Bearer #{get_access_token(subscription_key, region)}"
+    }
 
-    response = RestClient.post(
-      "#{speech_api_url}/recognize",
-      audio_data,
-      content_type: 'audio/wav',
-      accept: :json,
-      'Ocp-Apim-Subscription-Key': subscription_key
-    )
+    request_body = "<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='en-US'>
+                    <voice name='en-US-AriaNeural'>#{text}</voice></speak>"
 
-    result = JSON.parse(response.body)
+    begin
+      response = RestClient.post(
+        speech_api_url,
+        request_body,
+        headers
+      )
 
-    if result['RecognitionStatus'] == 'Success'
-      # Handle recognized text
-      recognized_text = result['DisplayText']
+      # Do something with the audio data (e.g., save to a file, stream to the client)
+      File.open('output.mp3', 'wb') do |file|
+        file.write(response.body)
+      end
+      @audio_file_url = '/output.mp3'
+      puts 'Speech saved to output.mp3'
+      
       # Your implementation here
-    else
-      # Handle the error
-      puts "Error recognizing speech: #{result['RecognitionStatus']} - #{result['ErrorDetails']}"
+      # respond_to(&:js)
+      respond_to do |format|
+        format.html 
+        format.turbo_stream { render turbo_stream: turbo_stream.update('audio_file', partial: 'display_speech') }
+      end
+    rescue RestClient::ExceptionWithResponse => e
+      render json: { error: "Speech synthesis failed: #{e.message}" }, status: e.http_code
+    end
+  end
+
+  def output_audio
+    audio_file_path = Rails.root.join('output.mp3')
+    send_file audio_file_path, type: 'audio/mp3', disposition: 'inline'
+  end
+
+  private
+
+  def get_access_token(subscription_key, region)
+    token_url = "https://#{region}.api.cognitive.microsoft.com/sts/v1.0/issueToken"
+    headers = {
+      'Ocp-Apim-Subscription-Key' => subscription_key,
+    }
+
+    begin
+      response = RestClient.post(
+        token_url,
+        nil,
+        headers
+      )
+
+      response.body
+
+    rescue RestClient::ExceptionWithResponse => e
+      raise "Error obtaining access token: #{e.message}"
     end
   end
 end

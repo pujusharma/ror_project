@@ -1,0 +1,41 @@
+<!-- app/views/speech/text_to_speech.html.erb -->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Text-to-Speech Demo</title>
+  <!-- Include Bootstrap CSS (either via CDN or from your assets) -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+  <div class="container mt-5">
+    <div class="card">
+      <div class="card-body">
+        <h1 class="card-title">Text-to-Speech Demo</h1>
+
+        <%= form_with(url: text_to_speech_display_path,  method: 'post', class: 'mb-3' , remote: true) do |form| %>
+          <div class="form-group">
+            <%= form.label 'text', 'Enter Text:' %>
+            <%= form.text_area 'text', class: 'form-control', rows: 4 %>
+          </div>
+          <%= form.submit 'Synthesize Speech', class: 'btn btn-primary' %>
+        <% end %>
+        <div id="audio_file">
+
+        </div>
+
+        <% if @error %>
+          <div class="alert alert-danger" role="alert">
+            <%= @error %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Include Bootstrap JS (either via CDN or from your assets) -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

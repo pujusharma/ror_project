@@ -1,0 +1,7 @@
+    <% if @audio_file_url %>
+          <h2 class="mt-4">Speech Output:</h2>
+          <audio controls class="mb-3">
+            <source src="<%= @audio_file_url %>" type="audio/mp3">
+            Your browser does not support the audio element.
+          </audio>
+        <% end %>

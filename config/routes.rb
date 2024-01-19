@@ -1,14 +1,17 @@
 Rails.application.routes.draw do
-  get 'speech/text_to_speech'
-  get 'speech/speech_to_text'
+
   
   resources :products  
+    get '/profile', to: 'home#profile'
+    get 'text_to_speech', to: 'speech#text_to_speech_form'
+  post 'text_to_speech_display', to: 'speech#text_to_speech', as: 'text_to_speech_display'
+  get '/output.mp3', to: 'speech#output_audio' 
+  post 'speech/speech_to_text'
   root 'products#index'  
   get 'home/index'
   get '/contact', to: "home#contact"
   post '/contact_email', to: "home#contact_email" , as: "contact_email"
   get '/about', to: "home#about"
-  get '/profile', to: "home#profile"
   devise_for :users
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

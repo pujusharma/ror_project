@@ -51,7 +51,8 @@ Rails.application.configure do
   config.active_storage.service = :local
 
   # Don't care if the mailer can't send.
-  
+  config.public_file_server.enabled = true
+
 
   config.action_mailer.perform_caching = false
 
