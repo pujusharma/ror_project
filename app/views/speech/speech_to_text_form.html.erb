@@ -1,0 +1,52 @@
+<!-- app/views/speech/speech_to_text_form.html.erb -->
+
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <h2 class="mb-4">Speech-to-Text</h2>
+
+      <%= form_with(url: speech_to_text_display_path, method: 'post', local: false, multipart: true, id: 'speechToTextForm') do |form| %>
+        <div class="form-group">
+          <%= form.label :audio_file, 'Select Audio File' %>
+          <%= form.file_field :audio_file, class: 'form-control-file', accept: 'audio/*' %>
+        </div>
+
+        <div class="text-center mt-4">
+          <%= form.submit 'Transcribe', class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+
+       <div id="text_file">
+
+        </div>
+
+      <%= render partial: 'display_transcription' %>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  $(document).ready(function() {
+    $('#speechToTextForm').submit(function(e) {
+      e.preventDefault();
+
+      var formData = new FormData($(this)[0]);
+
+      $.ajax({
+        type: 'POST',
+        url: $(this).attr('action'),
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function(response) {
+          // Update the content with the new transcription
+          $('#text_file').html(response);
+        },
+        error: function(error) {
+          console.error('Error:', error);
+        }
+      });
+    });
+  });
+</script>
